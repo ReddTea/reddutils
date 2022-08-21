@@ -41,6 +41,8 @@ df = pd.read_csv('data.csv')
 cor = rc.correlator()
 cor.display(df)
 ```
+![correlator](https://user-images.githubusercontent.com/14165443/185804943-5011ccb0-2dff-4d20-a443-8407518b96e5.png)
+
 
 ## Exodus
 Use for visualising the NASA Exoplanet Archive:
@@ -51,6 +53,7 @@ from reddutils import exodus
 exopop = exodus.NASA_Exoplanet_Archive()
 exopop.display()
 ```
+![exodus](https://user-images.githubusercontent.com/14165443/185804945-e6753a05-5750-4d00-96fe-657825c39fa1.png)
 
 
 ## Fourier Transform Visualiser
@@ -62,6 +65,7 @@ from reddutils import fourier
 fou = fourier.fourier()
 fou.display()
 ```
+![fourier](https://user-images.githubusercontent.com/14165443/185804946-50b5661a-3a1e-46b7-92a6-a2dcf0d489cd.png)
 
 
 ## Periodogram
@@ -75,6 +79,6 @@ df = pd.read_csv('data.csv')
 per = rp.LSP()
 per.display(df)
 ```
-
+![periodogram](https://user-images.githubusercontent.com/14165443/185804947-ce3b2e0e-2019-424d-9f17-bcb3a3ad144d.png)
 
 
