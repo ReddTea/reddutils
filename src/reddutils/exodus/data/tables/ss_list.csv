@@ -1,0 +1,9 @@
+pl_name,hostname,sy_snum,sy_pnum,discoverymethod,disc_year,pl_controv_flag,pl_orbper,pl_orbsmax,pl_rade,pl_radj,pl_bmasse,pl_bmassj,pl_bmassprov,pl_orbeccen,pl_insol,pl_eqt,ttv_flag,st_spectype,st_teff,st_rad,st_mass,st_met,st_metratio,st_logg,rastr,ra,decstr,dec,sy_dist,sy_vmag,sy_kmag,sy_gaiamag
+Mercury,Sun,1,8,Radial Velocity,1,0,87.9691,0.387098,0.383,0.0341692301,0.0553,0.000173950574,,0.20563,,,0,,5772,1,1,0,[Fe/H],,,,,,,,,
+Venus,Sun,1,8,Radial Velocity,1,0,224.701,0.723332,0.949,0.0846647503,0.815,0.0025636477,,0.006772,,,0,,5772,1,1,0,[Fe/H],,,,,,,,,
+Earth,Sun,1,8,Radial Velocity,1,0,365.256363,1,1,0.0892147,1,0.00314558,,0.0167086,,,0,,5772,1,1,0,[Fe/H],,,,,,,,,
+Mars,Sun,1,8,Radial Velocity,1,0,686.98,1.52368055,0.532,0.0474622204,0.107,0.00033657706,,0.0934,,,0,,5772,1,1,0,[Fe/H],,,,,,,,,
+Jupiter,Sun,1,8,Radial Velocity,1,0,4332.59,5.2038,11.21,1.000096787,317.8,0.999665324,,0.0489,,,0,,5772,1,1,0,[Fe/H],,,,,,,,,
+Saturn,Sun,1,8,Radial Velocity,1,0,10759.22,9.5826,9.45,0.843078915,95.2,0.299459216,,0.0565,,,0,,5772,1,1,0,[Fe/H],,,,,,,,,
+Uranus,Sun,1,8,Radial Velocity,1,0,30688.5,19.19126,4.01,0.357750947,14.5,0.04561091,,0.04717,,,0,,5772,1,1,0,[Fe/H],,,,,,,,,
+Neptune,Sun,1,8,Radial Velocity,1,0,60195,30.07,3.88,0.346153036,17.1,0.053789418,,0.008678,,,0,,5772,1,1,0,[Fe/H],,,,,,,,,
