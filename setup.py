@@ -24,6 +24,7 @@ setuptools.setup(
     package_dir={"": "src"},
     #data_files=[(path1, [path1+'/exo_list.csv', path1+'/ss_list.csv'])],
     include_package_data=True,
-    install_requires=['numpy', 'matplotlib', 'PyAstronomy'],
+    install_requires=['numpy', 'matplotlib>=3.5.1', 'PyAstronomy', 'gatspy',
+                      'ipywidgets', 'tabulate'],
     python_requires=">=3.6",
 )
