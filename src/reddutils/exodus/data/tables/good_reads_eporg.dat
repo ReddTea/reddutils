@@ -1,0 +1,39 @@
+my_keys
+Name of the planet                        
+Planetary orbital period [d]
+Planetary mass [MJ]
+Minimum planetary mass [MJ]
+Planetary radius [RJ]
+Central depth of transit [(r_p/r_star)^2]
+Impact Parameter [Stellar Radii]
+Duration of transit [d]
+Transit midpoint [BJD]
+Time of Periastron passage [d]
+Semi-major-axis [AU]
+Ratio sma to R_star [Stellar Radii]
+Orbital inclination of planet [deg]
+Orbital misalignment of planet [deg]
+Argument of Periastron [deg]
+Planetary orbital eccentricity
+Planetary surface gravity [log10(cm/s^2)]
+Planetary Density[g/cm^3]
+Detection type
+Kepler ID (if available)
+Name of host star
+Binary Flag
+Radius of star [Solar]
+Distance to Star [pc]
+Stellar parallax [mas]
+Stellar mass [Solar]
+Stellar effective temperature [K]
+Stellar vsin(i) [km/s]
+Stellar surface gravity [cm/s**2]
+Stellar S-Index
+Stellar chromospheric activity
+Stellar V-band brightness[mag]
+Stellar metallicity
+System radial velocity [km/s]
+Density of star [g/cm^3]
+Velocity Semi-amplitude [m/s]
+Declination (J2000) [dms]
+Right ascension (J2000) [hms]

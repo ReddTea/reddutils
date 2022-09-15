@@ -1,0 +1,26 @@
+my_keys
+Number of Stars
+Number of Planets
+Discovery Method
+Discovery Year
+Orbital Period [days]
+Orbit Semi-Major Axis [au])
+Planet Radius [Earth Radius]
+Planet Radius [Jupiter Radius]
+Planet Mass or Mass*sin(i) [Earth Mass]
+Planet Mass or Mass*sin(i) [Jupiter Mass]
+Eccentricity
+Insolation Flux [Earth Flux]
+Equilibrium Temperature [K]
+Data show Transit Timing Variations
+Stellar Effective Temperature [K]
+Stellar Radius [Solar Radius]
+Stellar Mass [Solar mass]
+Stellar Metallicity [dex]
+Stellar Surface Gravity [log10(cm/s**2)]
+RA [deg]
+Dec [deg]
+Distance [pc]
+V (Johnson) Magnitude
+Ks (2MASS) Magnitude
+Gaia Magnitude

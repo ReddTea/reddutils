@@ -1,8 +1,8 @@
 # @auto-fold regex /^\s*if/ /^\s*else/ /^\s*def/
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# version 0.0.1
-# date 18 aug 2022
+# version 1.0.0
+# date 15 sept 2022
 
 # dependencies
 import numpy as np
@@ -16,6 +16,10 @@ from scipy.stats import linregress
 import matplotlib.pyplot as pl
 from matplotlib import ticker
 import matplotlib.gridspec as gridspec
+
+from matplotlib.colors import Normalize as cnorm
+import matplotlib.cm as cm
+
 
 import ipywidgets
 from ipywidgets import interactive, interact, HBox, VBox
@@ -66,6 +70,7 @@ class correlator:
         # define values from buttons
         self.x = self.data[self.xaxis.value].values
         self.y = self.data[self.yaxis.value].values
+        self.yerr = self.data[self.yerraxis.value].values
         colors = self.data[self.color_by.value].values
 
 
@@ -73,7 +78,7 @@ class correlator:
         ##############
         # TAB 2
         TITLE = self.title_textbox.value
-        cm = pl.cm.get_cmap(self.cmap_drop.value)
+        cm_nam = pl.cm.get_cmap(self.cmap_drop.value)
 
         xlog = self.xlog_button.value
         ylog = self.ylog_button.value
@@ -92,10 +97,37 @@ class correlator:
         if self.grid_checkbox.value:
             ax.grid()
 
-        sc = ax.scatter(self.x, self.y, c=colors,
-                        marker=self.marker_styles[self.scatter_marker.value],
-                        cmap=cm, lw=self.scatter_lw.value, ec='k',
-                        s=scatter_size, alpha=self.scatter_alpha.value)
+
+        if not self.yerr_checkbox.value:
+            sc = ax.scatter(self.x, self.y, c=colors,
+                            marker=self.marker_styles[self.scatter_marker.value],
+                            cmap=cm_nam, lw=self.scatter_lw.value, ec='k',
+                            s=scatter_size, alpha=self.scatter_alpha.value)
+
+            pl.colorbar(sc)
+        if self.yerr_checkbox.value:
+            #sc = ax.errorbar(self.x, self.y, yerr=self.yerr)#,
+                                #ecolor=cm,
+                                #marker=self.marker_styles[self.scatter_marker.value],
+                                #lw=self.scatter_lw.value, ec='k',
+                                #s=scatter_size, alpha=self.scatter_alpha.value)
+
+            norm = cnorm(vmin=min(colors), vmax=max(colors), clip=True)
+            mapper = cm.ScalarMappable(norm=norm, cmap=cm_nam)
+            my_color = np.array([(mapper.to_rgba(v)) for v in colors])
+
+            #for x, y, e, color in zip(self.x, self.y, self.yerr, my_color):
+            for x, y, e, color in zip(self.x, self.y, self.yerr, my_color):
+                ax.scatter(x, y, color=color,
+                            marker=self.marker_styles[self.scatter_marker.value],
+                            lw=self.scatter_lw.value, ec='k',
+                            s=scatter_size, alpha=self.scatter_alpha.value)
+
+                ax.errorbar(x, y, e, lw=3, capsize=8, color=color)
+
+            sc = ax.scatter(self.x, self.y, s=0, c=colors, cmap=cm_nam)
+            pl.colorbar(sc)
+            pass
 
         # model
         slope, intercept, r, p, stderr = linregress(self.x, self.y)
@@ -128,7 +160,7 @@ class correlator:
         ax.yaxis.set_tick_params(which='major', size=10, width=2, direction='in', right='on')
         ax.yaxis.set_tick_params(which='minor', size=7, width=2, direction='in', right='on')
 
-        pl.colorbar(sc)
+
         pass
 
     def calc_stats(self):
@@ -169,20 +201,24 @@ class correlator:
 
     def set_buttons(self):
         self.xaxis = ipywidgets.Dropdown(options=self.keys,
-                value=self.xinit, description='x-axis:',
-                disabled=False)
-
+                value=self.xinit, description='x-axis:')
         self.yaxis = ipywidgets.Dropdown(options=self.keys,
-                value=self.yinit, description='y-axis:',
-                disabled=False)
+                value=self.yinit, description='y-axis:')
+        self.yerraxis = ipywidgets.Dropdown(options=self.keys,
+                value=self.yinit, description='yerr-axis:', disabled=False)
 
-        self.color_by = ipywidgets.Dropdown(options=self.keys,
-                value=self.xinit, description='Color by:',
-                disabled=False)
 
         self.sensitivity = ipywidgets.FloatSlider(value=0.05,
             min=0, max=1, step=0.01,
             description='Sensitivity: ', readout_format='.2f')
+        self.color_by = ipywidgets.Dropdown(options=self.keys,
+                value=self.xinit, description='Color by:')
+
+        self.yerr_checkbox = ipywidgets.Checkbox(
+                    value=False, description='Add yerr')
+
+
+
         # TAB 2
         if True:
             # general
@@ -307,8 +343,8 @@ class correlator:
         pass
 
     def set_tabs(self):
-        tab1_row1 = [self.xaxis, self.yaxis, self.color_by]
-        tab1_row2 = [self.sensitivity]
+        tab1_row1 = [self.xaxis, self.yaxis, self.yerraxis]
+        tab1_row2 = [self.sensitivity, self.color_by, self.yerr_checkbox]
 
         tab1_ = [tab1_row1, tab1_row2]
 

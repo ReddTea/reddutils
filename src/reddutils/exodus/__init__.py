@@ -1,8 +1,8 @@
 # @auto-fold regex /^\s*if/ /^\s*else/ /^\s*def/
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# version 0.0.1
-# date august 2022
+# version 1.0.0
+# date 15 sept 2022
 
 import numpy as np
 import pandas as pd
@@ -18,7 +18,7 @@ from ipywidgets import HBox, VBox
 
 from IPython.display import display
 
-
+from reddutils import imscatter
 # TABLES
 reads = ['Planet Name', 'Host Name', 'Number of Stars', 'Number of Planets',
          'Discovery Method', 'Discovery Year', 'Controversial Flag', 'Orbital Period [days]', 'Orbit Semi-Major Axis [au])',
@@ -28,32 +28,6 @@ reads = ['Planet Name', 'Host Name', 'Number of Stars', 'Number of Planets',
          'Stellar Radius [Solar Radius]', 'Stellar Mass [Solar mass]', 'Stellar Metallicity [dex]', 'Stellar Metallicity Ratio',
          'Stellar Surface Gravity [log10(cm/s**2)]','RA [sexagesimal]','RA [deg]','Dec [sexagesimal]','Dec [deg]',
          'Distance [pc]', 'V (Johnson) Magnitude', 'Ks (2MASS) Magnitude', 'Gaia Magnitude']
-
-good_reads = ['Number of Stars',
-              'Number of Planets',
-              'Discovery Method',
-              'Discovery Year',
-              'Orbital Period [days]',
-              'Orbit Semi-Major Axis [au])',
-              'Planet Radius [Earth Radius]',
-              'Planet Radius [Jupiter Radius]',
-              'Planet Mass or Mass*sin(i) [Earth Mass]',
-              'Planet Mass or Mass*sin(i) [Jupiter Mass]',
-              'Eccentricity',
-              'Insolation Flux [Earth Flux]',
-              'Equilibrium Temperature [K]',
-              'Data show Transit Timing Variations',
-              'Stellar Effective Temperature [K]',
-              'Stellar Radius [Solar Radius]',
-              'Stellar Mass [Solar mass]',
-              'Stellar Metallicity [dex]',
-              'Stellar Surface Gravity [log10(cm/s**2)]',
-              'RA [deg]',
-              'Dec [deg]',
-              'Distance [pc]',
-              'V (Johnson) Magnitude',
-              'Ks (2MASS) Magnitude',
-              'Gaia Magnitude']
 
 
 
@@ -67,17 +41,18 @@ planet_names = ['mercury.png', 'venus.png', 'earth.png', 'mars.png',
 
 
 _ROOT = os.path.dirname(__file__)
+
 def get_data(path):
     return os.path.join(_ROOT, 'data', path)
 
-
 dataloc = get_data('tables/exo_list.csv')
 imageloc = get_data('images/')
-ssloc = get_data('tables/ss_list.csv')
 
 
-class NASA_Exoplanet_Archive:
-    def __init__(self):
+
+
+class Exoplanet_Archive:
+    def __init__(self, data=None):
         self.style_list = ['default', 'classic'] + sorted(
                         style for style in pl.style.available
                         if style != 'classic' and
@@ -108,6 +83,21 @@ class NASA_Exoplanet_Archive:
 
         self.cn_colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
         self.include_ss = False
+
+        self.legend_title = 'Planet Discovery Method'
+
+        self.switch_method = True
+        self.method_key = 'discoverymethod'
+        self.data = data
+
+        if self.data == 'ExoplanetEU2':
+            self.method_key = 'detection_type'
+
+        if self.data == 'ExoplanetsOrg':
+            self.method_key = 'pl_dtype'
+
+        if self.data == 'NasaExoplanetArchive':
+            self.switch_method = False
 
         # SET OUT
         self.out = ipywidgets.Output()
@@ -154,29 +144,29 @@ class NASA_Exoplanet_Archive:
             Ndat = 0
             for m in self.methods:
                 if self.method_dict[m].value:
-                    mask = data['discoverymethod'] == m
+                    mask = data[self.method_key] == m
                     xx = x0[mask]
                     yy = y0[mask]
 
-                    #ax.plot(xx, yy, 'o', c=self.method_colors[m], label=m, alpha=alpha)
                     ax.scatter(xx, yy, label=m, **self.marker_presets[m])
 
                     Ndat += xx.size
                 else:
                     pass
         else:
-            ax.plot(x0, y0, color=self.cn_colors[0], markers='o', label = 'Planets')
+            ax.scatter(x0, y0, label='Planets', **self.marker_presets['unique'])
             pass
 
 
         if self.include_ss:
-            try:
-                xs = self.ss[key1]
-                ys = self.ss[key2]
-                for p in range(len(xs)):
-                    imscatter(xs[p], ys[p], imageloc+'%s' % planet_names[p], ax=ax)
-            except:
-                pass
+            #try:
+            xs = self.ss[key1]
+            ys = self.ss[key2]
+            for p in range(len(xs)):
+                imscatter(xs[p], ys[p], imageloc+'%s' % planet_names[p], ax=ax)
+            #except:
+            #    pass
+
 
         # AXIS
         ax.xaxis.set_tick_params(which='major', size=10, width=2, direction='in', top='on')
@@ -192,25 +182,22 @@ class NASA_Exoplanet_Archive:
 
 
         # LEGEND
-        TFP = {'style':'italic', 'size':'large', 'weight':'semibold'}
-        pl.legend(title='Planet Discovery Method', title_fontproperties=TFP)
+        if self.switch_method:
+            TFP = {'style':'italic', 'size':'large', 'weight':'semibold'}
+            pl.legend(title=self.legend_title, title_fontproperties=TFP)
 
     def plot_h(self, b=None):
         pl.close('all')
         x_axis = self.xaxis.value
 
-        by_method = self.methodbutton.value
-        alpha = 0.9
+        #by_method, alpha = [b.value for b in [self.methodbutton, self.alpha_slider]]
 
         TITLE = self.title_textbox.value
-        ylog = self.ylogh_button.value
 
         NORM = self.norm_h.value
-
         bins = self.bins_textbox.value
 
         minmask_x, maxmask_x = self.xlim1_textbox.value, self.xlim2_textbox.value
-        #minmask_y, maxmask_y = self.ylim1_textbox.value, self.ylim2_textbox.value
 
         pl.style.use(self.style_drop.value)
         #########################################################
@@ -220,31 +207,41 @@ class NASA_Exoplanet_Archive:
 
         self.fig, ax = pl.subplots(figsize=(self.hsize_slider.value, self.vsize_slider.value), dpi=80)
 
-        #if xlog:
-        #    ax.set_xscale('log')
+        if self.grid_checkbox.value:
+            ax.grid()
 
-        if ylog:
-            ax.set_yscale('log')
 
-        Ndat = x.size
 
         if True:
             lims_mask = (minmask_x<x)&(x<maxmask_x)
             data = self.d[lims_mask]
-
             x0 = data[key1]
 
-        Ndat = 0
-        xm = np.array([])
-        for m in self.methods:
-            if self.method_dict[m].value:
-                mask = data['discoverymethod'] == m
-                xm = np.append(xm, x0[mask].values)
+        if self.methodbutton.value:
+            xm = np.array([])
+            for m in self.methods:
+                if self.method_dict[m].value:
+                    mask = data[self.method_key] == m
+                    xm = np.append(xm, x0[mask].values)
+
+
+        else:
+            xm = x0.values
 
         Ndat = len(xm)
-        n, bins, patches = pl.hist(xm, bins, density=NORM, stacked=NORM, facecolor='green', alpha=0.75,
-                               edgecolor='k')
 
+        if self.xlogh_button.value:
+            ax.set_xscale('log')
+            histl, binsl = np.histogram(xm, bins=bins)
+            bins = np.logspace(np.log10(binsl[0]),np.log10(binsl[-1]),len(binsl))
+            pass
+
+        if self.ylogh_button.value:
+            ax.set_yscale('log')
+
+        n, bins, patches = pl.hist(xm, bins, density=NORM, stacked=NORM,
+                                    facecolor=self.bins_fc.value, alpha=self.bins_alpha.value,
+                                    edgecolor=self.bins_ec.value)
 
 
         ax.set_xlabel(self.readable[x.name], fontsize=22)
@@ -270,11 +267,11 @@ class NASA_Exoplanet_Archive:
                 value=self.unkeys[self.yinit], description='y-axis:',
                 disabled=False)
 
-            self.xlim1_textbox = ipywidgets.FloatText(value=min(self.d[self.unreadable[self.xaxis.value]]), description='x Minimum:',disabled=False)
-            self.xlim2_textbox = ipywidgets.FloatText(value=max(self.d[self.unreadable[self.xaxis.value]]), description='x Maximum:',disabled=False)
+            self.xlim1_textbox = ipywidgets.FloatText(value=np.amin(self.d[self.unreadable[self.xaxis.value]]), description='x Minimum:',disabled=False)
+            self.xlim2_textbox = ipywidgets.FloatText(value=np.max(self.d[self.unreadable[self.xaxis.value]]), description='x Maximum:',disabled=False)
 
-            self.ylim1_textbox = ipywidgets.FloatText(value=min(self.d[self.unreadable[self.yaxis.value]]), description='y Minimum:',disabled=False)
-            self.ylim2_textbox = ipywidgets.FloatText(value=max(self.d[self.unreadable[self.yaxis.value]]), description='y Maximum:',disabled=False)
+            self.ylim1_textbox = ipywidgets.FloatText(value=np.min(self.d[self.unreadable[self.yaxis.value]]), description='y Minimum:',disabled=False)
+            self.ylim2_textbox = ipywidgets.FloatText(value=np.max(self.d[self.unreadable[self.yaxis.value]]), description='y Maximum:',disabled=False)
 
             self.xlims_restore = ipywidgets.Button(description='Reset x range')
             self.ylims_restore = ipywidgets.Button(description='Reset y range')
@@ -396,21 +393,9 @@ class NASA_Exoplanet_Archive:
                 description='Save plot')
 
         if True:
-            self.bins_textbox = ipywidgets.IntText(value=60, description='Bins: ', disabled=False)
-
-            self.button_h = ipywidgets.Button(description='Refresh')
-
-            self.norm_h = ipywidgets.Checkbox(value=False,
-                        description='Normalise', disabled=False)
-
-            self.ylogh_button = ipywidgets.ToggleButton(
-                value=False, description='y log',
-                icon='check')
-
-            self.axis_restoreh =  ipywidgets.Button(description='Reset axis')
             # methods
             self.methodbutton = ipywidgets.ToggleButton(
-                value=True, description='By Method',
+                value=self.switch_method, description='By Method',
                 icon='check')
 
 
@@ -432,6 +417,91 @@ class NASA_Exoplanet_Archive:
 
 
             # ALL
+
+            self.all_restore = ipywidgets.Button(description='Restart', button_style='danger')
+
+    def set_buttonsh(self):
+        if True:
+            # axis
+            self.xaxis = ipywidgets.Dropdown(options=self.unkeys,
+                    value=self.unkeys[self.xinit], description='x-axis:')
+            self.bins_textbox = ipywidgets.IntText(value=60, description='Bins: ')
+            self.norm_h = ipywidgets.Checkbox(value=False,
+                            description='Normalise')
+            self.axis_restoreh =  ipywidgets.Button(description='Reset axis')
+
+            self.xlim1_textbox = ipywidgets.FloatText(value=np.amin(self.d[self.unreadable[self.xaxis.value]]), description='x Minimum:')
+            self.xlim2_textbox = ipywidgets.FloatText(value=np.max(self.d[self.unreadable[self.xaxis.value]]), description='x Maximum:')
+            self.xlims_restore = ipywidgets.Button(description='Reset x range')
+
+            self.button_h = ipywidgets.Button(description='Refresh')
+
+        if True:
+            self.title_textbox = ipywidgets.Text(
+                value='Exoplanet Population',
+                description='Title: ')
+            self.hsize_slider = ipywidgets.IntSlider(
+                value=9, min=2, max=20,
+                description='Plot hsize:')
+            self.vsize_slider = ipywidgets.IntSlider(
+                value=6, min=2, max=20,
+                description='Plot vsize:')
+
+            self.bins_alpha = ipywidgets.FloatSlider(
+                value=0.75, min=0., max=1., step=0.01,
+                description='Transparency:', readout_format='.2f')
+            self.xlogh_button = ipywidgets.ToggleButton(
+                    value=False, description='x log')
+            self.ylogh_button = ipywidgets.ToggleButton(
+                    value=False, description='y log')
+            self.grid_checkbox = ipywidgets.Checkbox(
+                    value=False, description='Grid')
+
+            self.style_drop = ipywidgets.Dropdown(
+                options=self.style_list,
+                value=self.style_list[0],
+                description='Plot Style: ')
+            self.bins_fc = ipywidgets.ColorPicker(
+                concise=False,
+                description='Face color: ',
+                value='#008000')
+            self.bins_ec = ipywidgets.ColorPicker(
+                concise=False,
+                description='Edge color: ',
+                value='#000000')
+
+        if True:
+            # TAB 4
+            self.plot_fmt = ipywidgets.RadioButtons(options=['png', 'pdf', 'svg'],
+                            value='pdf', description='Plot format:')
+            self.savefile_name = ipywidgets.Text(
+                value='current_plot', description='File Name')
+            self.plot_save_button = ipywidgets.Button(
+                description='Save plot')
+
+            self.button = ipywidgets.Button(
+                            description='Refresh')
+
+
+        if True:
+            # methods
+            self.methodbutton = ipywidgets.ToggleButton(
+                value=self.switch_method, description='By Method',
+                icon='check')
+
+            self.method_dict = {}
+            for m in self.methods:
+                self.method_dict[m] = ipywidgets.ToggleButton(value=self.fav_met[m], description=m, icon='check')
+                self.marker_presets[m] = {'marker':self.marker_styles['Circle'], 's':None, 'alpha':0.9,
+                                                        'facecolors':'none',
+                                                        'edgecolors':self.method_colors[m],
+                                                        'linewidths':1.5}
+
+            self.method_restore = ipywidgets.Button(description='Reset Methods')
+            self.method_invert = ipywidgets.Button(description='Invert Methods', button_style='warning')
+            self.method_unselect = ipywidgets.Button(description='Unselect all', button_style='danger')
+
+            self.method_restore.style.button_color = 'lightgreen'
 
             self.all_restore = ipywidgets.Button(description='Restart', button_style='danger')
 
@@ -458,13 +528,13 @@ class NASA_Exoplanet_Archive:
             # LIMITS
             @self.xlims_restore.on_click
             def restore_xlims(b):
-                self.xlim1_textbox.value = min(self.d[self.unreadable[self.xaxis.value]])
-                self.xlim2_textbox.value = max(self.d[self.unreadable[self.xaxis.value]])
+                self.xlim1_textbox.value = np.min(self.d[self.unreadable[self.xaxis.value]])
+                self.xlim2_textbox.value = np.max(self.d[self.unreadable[self.xaxis.value]])
 
             @self.ylims_restore.on_click
             def restore_ylims(b):
-                self.ylim1_textbox.value = min(self.d[self.unreadable[self.yaxis.value]])
-                self.ylim2_textbox.value = max(self.d[self.unreadable[self.yaxis.value]])
+                self.ylim1_textbox.value = np.min(self.d[self.unreadable[self.yaxis.value]])
+                self.ylim2_textbox.value = np.max(self.d[self.unreadable[self.yaxis.value]])
 
 
 
@@ -510,6 +580,7 @@ class NASA_Exoplanet_Archive:
                         #self.marker_presets[m]['edgecolors'] = self.scatter_ec.value
                         self.marker_presets[m]['linewidths'] = self.scatter_ew.value
                 else:
+
                     self.marker_presets[self.scatter_applyto.value]['marker'] = self.marker_styles[self.scatter_marker.value]
                     self.marker_presets[self.scatter_applyto.value]['s'] = self.scatter_size.value
                     self.marker_presets[self.scatter_applyto.value]['alpha'] = self.scatter_alpha.value
@@ -528,22 +599,50 @@ class NASA_Exoplanet_Archive:
             @self.ss_add_box.on_click
             def draw_ss(b):
                 self.include_ss = ~self.include_ss
-                '''
-                if self.include_ss == True:
-                    self.ss_add_box.description='Remove SS'
-                    self.ss_add_box.style.button_color = 'lightcoral'
-                if self.include_ss == False:
-                    self.ss_add_box.description='Add SS'
-                    self.ss_add_box.style.button_color = 'mediumpurple'
-                '''
-        # HISTOGRAM
+
+    def set_methodsh(self):
         if True:
             @self.axis_restoreh.on_click
             def restore_axish(b):
                 self.xaxis.value = self.unkeys[self.xinit]
                 self.bins_textbox.value = 60
+                self.xlogh_button.value = False
                 self.ylogh_button.value = False
                 self.norm_h.value = False
+
+            @self.xlims_restore.on_click
+            def restore_xlims(b):
+                self.xlim1_textbox.value = np.min(self.d[self.unreadable[self.xaxis.value]])
+                self.xlim2_textbox.value = np.max(self.d[self.unreadable[self.xaxis.value]])
+
+            @self.method_restore.on_click
+            def restore_methods(b):
+                for m in self.methods:
+                    self.method_dict[m].value = self.fav_met[m]
+
+            @self.method_invert.on_click
+            def invert_methods(b):
+                for m in self.methods:
+                    foo = self.method_dict[m].value
+                    self.method_dict[m].value = not foo
+
+            @self.method_unselect.on_click
+            def unselect_methods(b):
+                for m in self.methods:
+                    if m == 'Radial Velocity':
+                        pass
+                    else:
+                        self.method_dict[m].value = False
+
+            @self.all_restore.on_click
+            def restore_all(b):
+                self.method_restore.click()
+                self.axis_restoreh.click()
+                self.xlims_restore.click()
+
+            @self.plot_save_button.on_click
+            def save_plot_on_click(b):
+                self.fig.savefig(self.savefile_name.value, format=self.plot_fmt.value)
 
             @self.button_h.on_click
             def plot_on_click(b):
@@ -618,17 +717,19 @@ class NASA_Exoplanet_Archive:
 
 
             ##########
+        pass
+
+    def set_tabsh(self):
         if True:
             th1_row1 = [self.xaxis, self.bins_textbox, self.norm_h, self.axis_restoreh]
             th1_row2 = [self.xlim1_textbox, self.xlim2_textbox, self.xlims_restore]
-            #t1_row3 = [self.ylim1_textbox, self.ylim2_textbox, self.ylims_restore]
             th1_row3 = [self.all_restore]
             tabh1 = [th1_row1, th1_row2, th1_row3]
 
 
             th2_row1 = [self.title_textbox, self.hsize_slider, self.vsize_slider]
-            th2_row2 = [self.scatter_alpha, self.ylogh_button]
-            th2_row3 = [self.style_drop]
+            th2_row2 = [self.bins_alpha, self.xlogh_button, self.ylogh_button, self.grid_checkbox]
+            th2_row3 = [self.style_drop, self.bins_fc, self.bins_ec]
             tabh2 = [th2_row1, th2_row2, th2_row3]
 
 
@@ -652,40 +753,87 @@ class NASA_Exoplanet_Archive:
             for i in range(len(tabh_names)):
                 self.tabh.set_title(i, tabh_names[i])
 
-
-        pass
-
-    def set_data(self, data=None):
-        if data == None:
+    def set_data(self):
+        if self.data == 'offline' or self.data == None:
             data = dataloc
             self.d = pd.read_csv(data, usecols=good_cols)
-            self.keys = self.d.columns
-
-            self.ss = pd.read_csv(ssloc)
-
-            self.readable = {}
-            for i in range(len(self.keys)):
-                self.readable[self.keys[i]] = good_reads[i]
-
-            self.unreadable = {v: k for k, v in self.readable.items()}
-            self.unkeys = list(self.unreadable.keys())
+            self.ss = pd.read_csv(get_data('tables/ss_list_offline.csv'))
 
             # SET COLORS
-            self.methods = np.unique(self.d['discoverymethod'])
+            self.methods = np.unique(self.d[self.method_key])
             fav_met = [False, False, True, True, True, False, False, False, True, True, True]
 
-            self.method_colors = {}
-            self.fav_met = {}
+            self.good_reads = pd.read_csv(get_data('tables/good_reads_offline.dat')).values.T[0]
+            initcoords = [5, 9]
 
 
-            for i in range(len(self.methods)):
-                self.method_colors[self.methods[i]] = 'C%i' % i
-                self.fav_met[self.methods[i]] = fav_met[i]
-            self.xinit = 5
-            self.yinit = 9
+        elif self.data == 'NasaExoplanetArchive':
+            self.d = pd.DataFrame.from_records(getattr(pyasl, self.data)().getAllData())  ###
+            self.ss = pd.read_csv(get_data('tables/ss_list_nasa.csv'))
+
+            # SET COLORS
+            self.methods = np.array(['unique'])  ###
+            fav_met = [True]  ###
+
+            self.good_reads = pd.read_csv(get_data('tables/good_reads_nasa.dat')).values.T[0]
+            initcoords = [5, 6]
+
+        elif self.data == 'ExoplanetEU2':
+            v = pyasl.ExoplanetEU2()
+            self.d = v.getAllDataPandas()
+            self.ss = pd.read_csv(get_data('tables/ss_list_epeu.csv'))
+
+            # SET COLORS
+            self.methods = np.unique(self.d['detection_type'])
+            # Astrometry, Default, Imaging, Microlensing
+            #Primary Transit, Radial Velocity, TTV, Timing
+            fav_met = [False, False, True, True,
+                       True, True, False, False]
+
+            self.good_reads = pd.read_csv(get_data('tables/good_reads_epeu.dat')).values.T[0]
+            initcoords = [10, 2]
+
+
+        elif self.data == 'ExoplanetsOrg':
+            self.d = pd.DataFrame.from_records(getattr(pyasl, self.data)().getAllData())  ###
+
+            self.ss = pd.read_csv(get_data('tables/ss_list_eporg.csv'))
+
+            # SET COLORS
+            self.methods = np.unique(self.d['pl_dtype'])
+            # 'Imaging', 'Microlensing', 'None', 'RV',
+            #'Timing', 'Transit', 'Transit Timing Variations'
+            fav_met = [True, True, False, True,
+                       False, True, False]
+
+            self.good_reads = pd.read_csv(get_data('tables/good_reads_eporg.dat')).values.T[0]
+            initcoords = [10, 2]
+
+
+
         else:
-            print('This method is not built in yet.')
+            raise ValueError('String not recognised! Try with offline/NasaExoplanetArchive/ExoplanetEU2/ExoplanetsOrg')
             pass
+
+        self.keys = [*self.d.columns]
+
+        self.readable = {}
+
+        for i in range(len(self.keys)):
+            self.readable[self.keys[i]] = self.good_reads[i]  ###
+
+        self.unreadable = {v: k for k, v in self.readable.items()}
+        self.unkeys = [*self.unreadable.keys()]
+
+        self.method_colors = {}
+        self.fav_met = {}
+
+        for i in range(len(self.methods)):
+            self.method_colors[self.methods[i]] = 'C%i' % i
+            self.fav_met[self.methods[i]] = fav_met[i]
+
+        self.xinit = initcoords[0]
+        self.yinit = initcoords[1]
 
     def setup(self):
         self.set_buttons()
@@ -693,12 +841,23 @@ class NASA_Exoplanet_Archive:
         self.set_tabs()
         pass
 
-    def display(self, data=None):
-        self.set_data(data)
+    def setuph(self):
+        self.set_buttonsh()
+        self.set_methodsh()
+        self.set_tabsh()
+        pass
+
+
+    def display(self):
+        self.set_data()
+        #raise ValueError('String not recognised! Try with offline/NEXA/exoplanetEU/exoplanetsORG')
+
         self.setup()
         return VBox(children=[self.tab, self.button, self.out])
 
-    def histogram(self):
+    def display_hist(self):
+        self.set_data()
+        self.setuph()
         return VBox(children=[self.tabh, self.button_h, self.out_h])
 
     pass
@@ -706,23 +865,7 @@ class NASA_Exoplanet_Archive:
 
 
 
-def imscatter(x, y, image, ax=None, zoom=1, fmt=None):
-    if ax is None:
-        ax = pl.gca()
-    try:
-        image = pl.imread(image, format=fmt)
-    except TypeError:
-        # Likely already an array...
-        pass
-    im = OffsetImage(image, zoom=zoom)
-    x, y = np.atleast_1d(x, y)
-    artists = []
-    for x0, y0 in zip(x, y):
-        ab = AnnotationBbox(im, (x0, y0), xycoords='data', frameon=False)
-        artists.append(ax.add_artist(ab))
-    ax.update_datalim(np.column_stack([x, y]))
-    ax.autoscale()
-    return artists
+
 
 
 

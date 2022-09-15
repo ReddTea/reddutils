@@ -1,0 +1,22 @@
+my_keys
+Name of host star
+Name of the planet
+Planet letter
+Right ascension [deg]
+Declination [deg]
+Planetary orbital period [d]
+Planetary mass [MJ]
+Planetary radius [RJ]
+Central depth of transit [%]
+Transit duration [d]
+Transit midpoint [BJD]
+Semi-major-axis [AU]
+Orbital inclination of planet [deg]
+Stellar radii [Solar]
+Distance to star [pc]
+Stellar maz [Solar]
+Effective temperature of star [K]
+Stellar surface gravity [cm/s**2]
+Stellar V-band brightness [mag]
+Projected stellar rotation speed (vsini) [km/s]
+Stellar Ks-band brightness [mag]

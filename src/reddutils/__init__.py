@@ -1,8 +1,8 @@
 # @auto-fold regex /^\s*if/ /^\s*else/ /^\s*def/
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# version 1.0.0
-# date 21 aug  2022
+# version 1.0.2
+# date 15 sept  2022
 
 __all__ = ['correlator', 'exodus', 'fourier', 'owoifier', 'periodogram']
 
@@ -145,6 +145,87 @@ def ensure_dir(name, loc=''):
     os.makedirs(dr+'/posteriors')
     os.makedirs(dr+'/traces')
     return dr
+
+
+def votable_to_pandas(votable_file):
+    votable = parse(votable_file)
+    table = votable.get_first_table().to_table(use_names_over_ids=True)
+    return table.to_pandas()
+
+
+def imscatter(x, y, image, ax=None, zoom=1, fmt=None):
+    import matplotlib.pyplot as pl
+    from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+    if ax is None:
+        ax = pl.gca()
+    try:
+        image = pl.imread(image, format=fmt)
+    except TypeError:
+        # Likely already an array...
+        pass
+    im = OffsetImage(image, zoom=zoom)
+    x, y = np.atleast_1d(x, y)
+    artists = []
+    for x0, y0 in zip(x, y):
+        ab = AnnotationBbox(im, (x0, y0), xycoords='data', frameon=False)
+        artists.append(ax.add_artist(ab))
+    ax.update_datalim(np.column_stack([x, y]))
+    ax.autoscale()
+    return artists
+
+
+def reddplot(plots, fs=(6, 4.5), dpi=100, **kwargs):
+    '''
+    usage ex.
+    things_to_plot = [[x1, y1, 'C0', {'label':'$\hat{\mu_1}$'}],
+                     [x2, y2, 'r--', {'label':'Model $\mu_1$'}]
+                     ]
+
+    plot_options = {'set_xlabel': ['N samples', {'fontsize':18}],
+                    'set_ylabel': ['$\hat{\mu_1}(N)$', {'fontsize':18}],
+                    'set_title': ['Means of $\hat{\mu_1}$', {'fontsize':22}]
+                    }
+    reddplot(things_to_plot, **plot_options)
+    '''
+    import matplotlib.pyplot as pl
+    fig, ax = pl.subplots(figsize=fs, dpi=dpi)
+
+    for x, y, style, opts in plots:
+        ax.plot(x, y, style, **opts)
+        for k in kwargs:
+            getattr(ax, k)(kwargs[k][0], **kwargs[k][1])
+
+    ax.legend()
+
+
+def reddhist(samples, bins=60, fit=[0, 1], fs=(6, 4.5), dpi=100, **kwargs):
+    '''
+    usage ex.
+    plot_options = {'myfit':[True, 'C2--', {'linewidth':2, 'label':'Model'}],
+                    'autofit':[True, 'C3--', {'linewidth':2, 'label':'Auto Fit'}],
+                    'set_xlabel': ['$\hat{\mu_1}$', {'fontsize':18}],
+                    'set_ylabel': ['Density', {'fontsize':18}],
+                    'set_title': ['Histogram for $\hat{\mu_1}(N=%i)$' % (N0), {'fontsize':22}]}
+    '''
+    import matplotlib.pyplot as pl
+    fig, ax = pl.subplots(figsize=fs, dpi=dpi)
+
+    n_, bins_, patches_ = ax.hist(samples, bins=bins, density=True, stacked=True,
+                          facecolor='C1', alpha=0.75)
+
+    if kwargs['myfit'][0]:
+        my_y = norm.pdf(bins_, fit[0], fit[1])
+        ax.plot(bins_, my_y, kwargs['myfit'][1], **kwargs['myfit'][2])
+
+    if kwargs['autofit'][0]:
+        auto_mu, auto_sigma = norm.fit(samples)
+        auto_y = norm.pdf(bins_, auto_mu, auto_sigma)
+        ax.plot(bins_, auto_y, kwargs['autofit'][1], **kwargs['autofit'][2])
+
+    for key in [*kwargs][2:]:
+        getattr(ax, key)(kwargs[key][0], **kwargs[key][1])
+
+    ax.legend()
 
 
 class importer:

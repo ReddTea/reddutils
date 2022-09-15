@@ -1,0 +1,99 @@
+my_keys
+Name of a planet
+Planet status
+Planetary Mass [jovMass]
+Planetary Mass error [jovMass]
+Planetary Mass error [jovMass]
+Planetary Mass*sin(i) [jovMass]
+Planetary Mass*sin(i) error [jovMass]
+Planetary Mass*sin(i) error [jovMass]
+Planetary Radius [Rjup]
+Planetary Radius error [Rjup]
+Planetary Radius error [Rjup]
+Orbital Period [d]
+Orbital Period error [d]
+Orbital Period error [d]
+Semi-Major Axis [AU]
+Semi-Major Axis error [AU]
+Semi-Major Axis error [AU]
+Orbital Eccentricity
+Orbital Eccentricity error
+Orbital Eccentricity error
+Orbital Inclination [deg]
+Orbital Inclination error [deg]
+Orbital Inclination error [deg]
+Angular Distance [arcsec]
+Year of Discovery [yr]
+Last Update
+Argument of Periastron [deg]
+Argument of Periastron error [deg]
+Argument of Periastron error [deg]
+Epoch of Periastron [d]
+Epoch of Periastron error [d]
+Epoch of Periastron error [d]
+Conjonction Date [d]
+Conjonction Date error [d]
+Conjonction Date error [d]
+Primary Transit [d]
+Primary Transit error [d]
+Primary Transit error [d]
+Secondary Transit [d]
+Secondary transit error [d]
+Secondary transit error [d]
+Sky-projected angle between the planetary orbital spin and thestellar rotational spin [deg]
+Sky-projected angle between the planetary orbital spin and thestellar rotational spin error [deg]
+Sky-projected angle between the planetary orbital spin and thestellar rotational spin error [deg]
+Impact Parameter b
+Impact Parameter b error
+Impact Parameter b error
+Zero Radial Speed time [d]
+Zero Radial Speed time error [d]
+Zero Radial Speed time error [d]
+Velocity Semiamplitude K [m/s]
+Velocity Semiamplitude K error [m/s]
+Velocity Semiamplitude K error [m/s]
+Calculated temperature [K]
+Calculated temperature error [K]
+Calculated temperature error [K]
+Measured temperature [K]
+Hottest point longitude [deg]
+Geometric albedo
+Geometric albedo error
+Geometric albedo error
+log(g)
+Publication Status
+Detection type
+Mass Measurement Method
+Radius Measurement Method
+List of planet alternative names
+List of detected molecules
+Name of a host star
+RA (J2000) of a star [deg]
+Dec (J2000) of a star [deg]
+V magnitude of a host star [mag]
+I magnitude of a host star [mag]
+J magnitude of a host star [mag]
+H magnitude of a host star [mag]
+K magnitude of a host star [mag]
+Distance to a host star [pc]
+Distance to a host star error [pc]
+Distance to a host star error [pc]
+Metallicity of a host star
+Metallicity of a host star error
+Metallicity of a host star error
+Mass of a host star [Msun]
+Mass of a host star error [Msun]
+Mass of a host star error [Msun]
+Radius of a host star [Rsun]
+Radius of a host star error [Rsun]
+Radius of a host star error [Rsun]
+Spectral type of a host star
+Age of a host star [Gyr]
+Age of a host star error [Gyr]
+Age of a host star error [Gyr]
+Effective temperature of a host star [K]
+Effective temperature of a host star error [K]
+Effective temperature of a host star error [K]
+Star Detected Disc
+Star magnetic field
+List of star alternative names
