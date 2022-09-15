@@ -50,11 +50,20 @@ Use for visualising the NASA Exoplanet Archive:
 ```sh
 from reddutils import exodus
 
-exopop = exodus.NASA_Exoplanet_Archive()
+#exopop = exodus.Exoplanet_Archive()
+exopop = exodus.Exoplanet_Archive('NasaExoplanetArchive')
+#exopop = exodus.Exoplanet_Archive('ExoplanetEU2')
+#exopop = exodus.Exoplanet_Archive('ExoplanetsOrg')
+
 exopop.display()
 ```
 ![exodus](https://user-images.githubusercontent.com/14165443/185804945-e6753a05-5750-4d00-96fe-657825c39fa1.png)
 
+Try out the histogram mode:
+
+```sh
+exopop.display_hist()
+```
 
 ## Fourier Transform Visualiser
 For visualising fourier transforms and the nyquist limit.
