@@ -1,3 +1,6 @@
 numpy
-matplotlib
+matplotlib>=3.5.1
 PyAstronomy
+gatspy
+ipywidgets
+tabulate

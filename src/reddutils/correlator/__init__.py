@@ -78,6 +78,8 @@ class correlator:
         ##############
         # TAB 2
         TITLE = self.title_textbox.value
+        XAXIS_LABEL = self.xaxis_label.value
+        YAXIS_LABEL = self.yaxis_label.value
         cm_nam = pl.cm.get_cmap(self.cmap_drop.value)
 
         xlog = self.xlog_button.value
@@ -143,8 +145,8 @@ class correlator:
             ax.set_yscale('log')
 
         ax.set_title(TITLE, fontsize=self.title_fontsize.value)
-        ax.set_xlabel(self.xaxis.value, fontsize=self.xaxis_fontsize.value)
-        ax.set_ylabel(self.yaxis.value, fontsize=self.yaxis_fontsize.value)
+        ax.set_xlabel(XAXIS_LABEL, fontsize=self.xaxis_fontsize.value)
+        ax.set_ylabel(YAXIS_LABEL, fontsize=self.yaxis_fontsize.value)
 
         if xlog:
             ax.set_xscale('log')
@@ -337,7 +339,8 @@ class correlator:
                     description='Save plot')
             @self.plot_save_button.on_click
             def save_plot_on_click(b):
-                self.fig.savefig(self.savefile_name.value, format=self.plot_fmt.value)
+                pl.tight_layout()
+                self.fig.savefig(self.savefile_name.value+'.'+self.plot_fmt.value, bbox_inches='tight')
 
 
         pass

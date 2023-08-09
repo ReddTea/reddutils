@@ -21,7 +21,14 @@ src/reddutils/exodus/data/images/saturn.png
 src/reddutils/exodus/data/images/uranus.png
 src/reddutils/exodus/data/images/venus.png
 src/reddutils/exodus/data/tables/exo_list.csv
-src/reddutils/exodus/data/tables/ss_list.csv
+src/reddutils/exodus/data/tables/good_reads_epeu.dat
+src/reddutils/exodus/data/tables/good_reads_eporg.dat
+src/reddutils/exodus/data/tables/good_reads_nasa.dat
+src/reddutils/exodus/data/tables/good_reads_offline.dat
+src/reddutils/exodus/data/tables/ss_list_epeu.csv
+src/reddutils/exodus/data/tables/ss_list_eporg.csv
+src/reddutils/exodus/data/tables/ss_list_nasa.csv
+src/reddutils/exodus/data/tables/ss_list_offline.csv
 src/reddutils/fourier/__init__.py
 src/reddutils/owoifier/__init__.py
 src/reddutils/periodogram/__init__.py

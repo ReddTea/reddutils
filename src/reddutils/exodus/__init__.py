@@ -106,6 +106,8 @@ class Exoplanet_Archive:
     def plot(self, b=None):
         pl.close('all')
         x_axis, y_axis = [b.value for b in [self.xaxis, self.yaxis]]
+        XAXIS_LABEL = self.readable[x.name]
+        YAXIS_LABEL = self.readable[y.name]
         TITLE = self.title_textbox.value
 
         minmask_x, maxmask_x = self.xlim1_textbox.value, self.xlim2_textbox.value
@@ -174,8 +176,8 @@ class Exoplanet_Archive:
         ax.yaxis.set_tick_params(which='major', size=10, width=2, direction='in', right='on')
         ax.yaxis.set_tick_params(which='minor', size=7, width=2, direction='in', right='on')
 
-        ax.set_xlabel(self.readable[x.name], fontsize=self.xaxis_fontsize.value)
-        ax.set_ylabel(self.readable[y.name], fontsize=self.yaxis_fontsize.value)
+        ax.set_xlabel(XAXIS_LABEL, fontsize=self.xaxis_fontsize.value)
+        ax.set_ylabel(YAXIS_LABEL, fontsize=self.yaxis_fontsize.value)
 
         # TITLE
         ax.set_title(TITLE+' N = %i' % Ndat, fontsize=self.title_fontsize.value)
@@ -594,7 +596,8 @@ class Exoplanet_Archive:
 
             @self.plot_save_button.on_click
             def save_plot_on_click(b):
-                self.fig.savefig(self.savefile_name.value, format=self.plot_fmt.value)
+                pl.tight_layout()
+                self.fig.savefig(self.savefile_name.value+'.'+self.plot_fmt.value, bbox_inches='tight')
 
             @self.ss_add_box.on_click
             def draw_ss(b):
@@ -642,7 +645,8 @@ class Exoplanet_Archive:
 
             @self.plot_save_button.on_click
             def save_plot_on_click(b):
-                self.fig.savefig(self.savefile_name.value, format=self.plot_fmt.value)
+                pl.tight_layout()
+                self.fig.savefig(self.savefile_name.value+'.'+self.plot_fmt.value, bbox_inches='tight')
 
             @self.button_h.on_click
             def plot_on_click(b):

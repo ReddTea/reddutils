@@ -121,6 +121,8 @@ class LSP:
 
         method = method_dict[self.method_drop.value]
         # PLOT
+        XAXIS_LABEL = self.xaxis_label.value
+        YAXIS_LABEL = self.yaxis_label.value
         TITLE = self.title_textbox.value
 
         xlog = self.xlog_button.value
@@ -184,8 +186,8 @@ class LSP:
             ax.annotate(f' Max = {np.round(periods[i], 2)}', (periods[i]+10, power[i]))
 
         ax.set_title(TITLE, fontsize=self.title_fontsize.value)
-        ax.set_xlabel(self.xaxis_label.value, fontsize=self.xaxis_fontsize.value)
-        ax.set_ylabel(self.yaxis_label.value, fontsize=self.yaxis_fontsize.value)
+        ax.set_xlabel(XAXIS_LABEL, fontsize=self.xaxis_fontsize.value)
+        ax.set_ylabel(YAXIS_LABEL, fontsize=self.yaxis_fontsize.value)
 
         if xlog:
             ax.set_xscale('log')
@@ -356,7 +358,8 @@ class LSP:
 
         @self.plot_save_button.on_click
         def save_plot_on_click(b):
-            self.fig.savefig(self.savefile_name.value, format=self.plot_fmt.value)
+            pl.tight_layout()
+            self.fig.savefig(self.savefile_name.value+'.'+self.plot_fmt.value, bbox_inches='tight')
 
 
         def on_value_change(change):
